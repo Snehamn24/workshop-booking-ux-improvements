@@ -1,35 +1,212 @@
 {% extends 'workshop_app/base.html' %}
 
-	{% block title %}
-		Register
-	{% endblock %}
+{% block title %}
+Register
+{% endblock %}
 
 {% block content %}
 
-	<style type="text/css">
-    	label.required::after {
-    	content: "*";
-    	color: red;
-		}
+<style>
 
-		.errorlist {
-      color: red;
+
+/* ===== ALLOW SCROLL ===== */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+/* Remove bootstrap spacing issues */
+.container, .row {
+    all: unset;
+}
+
+/* ===== BACKGROUND ===== */
+.register-page {
+    min-height: 100vh;
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 40px 15px;  /* IMPORTANT for scroll */
+
+    background: linear-gradient(135deg, #0a192f, #112240, #1d4ed8);
+}
+
+/* ===== GLOW BACKGROUND ===== */
+.register-page::before,
+.register-page::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.25;
+    animation: float 8s infinite alternate ease-in-out;
+}
+
+.register-page::before {
+    width: 400px;
+    height: 400px;
+    background: #3b82f6;
+    top: 10%;
+    left: 10%;
+}
+
+.register-page::after {
+    width: 350px;
+    height: 350px;
+    background: #60a5fa;
+    bottom: 10%;
+    right: 10%;
+}
+
+@keyframes float {
+    from { transform: translateY(0px); }
+    to { transform: translateY(-40px); }
+}
+
+/* ===== CARD ===== */
+.register-card {
+    position: relative;
+    z-index: 10;
+
+    width: 100%;
+    max-width: 600px;
+
+    padding: 30px;
+    border-radius: 18px;
+
+    background: rgba(173, 216, 230, 0.15); /* slightly stronger */
+    backdrop-filter: blur(12px);
+
+    border: 1px solid rgba(255,255,255,0.3);
+
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+
+    color: #ffffff;
+
+    animation: fadeUp 0.8s ease;
+}
+
+/* Animation */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
     }
-	</style>
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
-	<div class="container" >
-		<br>
-		<h3>Coordinator Registration Form</h3>
-		<br>
-		<form action="" method="post">
-			{% csrf_token %}
-				<table class="table table-bordered">
-					{{ form.as_table }}
-				</table>
+/* ===== TITLE ===== */
+.title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
 
-				<button class="btn btn-primary" type="submit">Register</button>
-		</form><br>
-		<!-- Activate when Instructor registeration starts -->
-		<br>
-	</div>
+/* ===== LABEL FIX (VERY IMPORTANT) ===== */
+label {
+    color: #ffffff !important;   /* STRONG WHITE */
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Required star */
+label.required::after {
+    content: " *";
+    color: #f87171;
+}
+
+/* ===== INPUTS ===== */
+input, select, textarea {
+    width: 100% !important;
+    padding: 10px !important;
+
+    border-radius: 8px !important;
+
+    background: rgba(255,255,255,0.15) !important;
+    border: 1px solid rgba(255,255,255,0.3) !important;
+
+    color: white !important;
+
+    margin-top: 5px;
+    margin-bottom: 12px;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: #60a5fa !important;
+    box-shadow: 0 0 10px rgba(96,165,250,0.6);
+}
+
+/* ===== TABLE ===== */
+table {
+    width: 100%;
+}
+
+td {
+    padding: 8px;
+}
+
+/* ===== ERROR ===== */
+.errorlist {
+    color: #fca5a5;
+    font-size: 12px;
+}
+
+/* ===== BUTTON ===== */
+.btn-register {
+    width: 100%;
+    padding: 12px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #2563eb;
+    color: white;
+
+    font-weight: 600;
+    cursor: pointer;
+
+    margin-top: 15px;
+    transition: 0.3s;
+}
+
+.btn-register:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 600px) {
+    .register-card {
+        padding: 20px;
+    }
+}
+</style>
+
+<div class="register-page">
+
+    <div class="register-card">
+
+        <div class="title">Coordinator Registration</div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <table>
+                {{ form.as_table }}
+            </table>
+
+            <button class="btn-register" type="submit">Register</button>
+        </form>
+
+    </div>
+
+</div>
+
 {% endblock %}
