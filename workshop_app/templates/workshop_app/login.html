@@ -1,53 +1,264 @@
 {% extends 'workshop_app/base.html' %}
 
 {% block title %}
-    Login
+Login
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6 col-md-offset-6">
-                <div class="card">
-                    <div class="card-body">
-                        <form class="px-3 py-3" method="post">
-                        {% csrf_token %}
-                        {% if form.errors %}
-                            {% for field in form %}
-                                {% for error in field.errors %}
-                                    <div class="alert alert-dismissible alert-danger">
-                                        <button type="button" class="close" data-dismiss="alert">
-                                            <i class="fa fa-close"></i>
-                                        </button>
-                                        <strong>{{ error|escape }}</strong>
-                                    </div>
-                                {% endfor %}
-                            {% endfor %}
-                            {% for error in form.non_field_errors %}
-                                <div class="alert alert-dismissible alert-danger">
-                                    <button type="button" class="close" data-dismiss="alert">
-                                        <i class="fa fa-close"></i>
-                                    </button>
-                                    <strong>{{ error|escape }}</strong>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
-                        <div class="form-group">
-                          <label for="id_username">Username</label>
-                          {{ form.username }}
-                        </div>
-                        <div class="form-group">
-                          <label for="id_password">Password</label>
-                          {{ form.password }}
-                        </div>
-                        <button type="submit" class="btn btn-primary">Sign in</button>
-                        </form>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'workshop_app:register' %}">New around here? Sign up</a>
-                        <a class="dropdown-item" href="{% url 'password_reset' %}">Forgot password?</a>
-                    </div>
-                </div>  
-            </div>
+
+<style>
+
+/* ===== FORCE FULL SCREEN (FIX WHITE SPACE) ===== */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Override Bootstrap container */
+.container, .row, .col-md-6 {
+    all: unset;
+}
+
+/* ===== MAIN BACKGROUND ===== */
+.login-page {
+    position: fixed; /* KEY FIX */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    overflow: hidden;
+
+    background: linear-gradient(135deg, #0a192f, #112240, #1d4ed8);
+}
+
+/* ===== ANIMATED GLOW BACKGROUND ===== */
+.login-page::before,
+.login-page::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.25;
+    animation: float 8s infinite alternate ease-in-out;
+}
+
+.login-page::before {
+    width: 400px;
+    height: 400px;
+    background: #3b82f6;
+    top: 10%;
+    left: 10%;
+}
+
+.login-page::after {
+    width: 350px;
+    height: 350px;
+    background: #60a5fa;
+    bottom: 10%;
+    right: 10%;
+    animation-delay: 2s;
+}
+
+@keyframes float {
+    from { transform: translateY(0px); }
+    to { transform: translateY(-40px); }
+}
+
+/* ===== LOGIN CARD ===== */
+.login-card {
+    position: relative;
+    z-index: 10;
+
+    width: 100%;
+    max-width: 380px;
+    padding: 35px;
+
+    border-radius: 18px;
+
+    background: rgba(173, 216, 230, 0.12);
+    backdrop-filter: blur(12px);
+
+    border: 1px solid rgba(255,255,255,0.25);
+
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+
+    color: #e6f1ff;
+
+    /* ENTRY ANIMATION */
+    animation: fadeUp 0.8s ease;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ===== TITLE ===== */
+.title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: #a8c7fa;
+    margin-bottom: 25px;
+}
+
+/* ===== INPUTS ===== */
+input {
+    width: 100% !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+
+    background: rgba(255,255,255,0.1) !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+
+    color: #ffffff !important;
+
+    margin-bottom: 15px;
+    outline: none;
+    transition: 0.3s;
+}
+
+input::placeholder {
+    color: #cbd5e1;
+}
+
+input:focus {
+    border-color: #60a5fa !important;
+    box-shadow: 0 0 12px rgba(96,165,250,0.6);
+    transform: scale(1.02);
+}
+
+/* ===== BUTTON ===== */
+.btn-login {
+    width: 100%;
+    padding: 12px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #2563eb;
+    color: white;
+
+    font-weight: 600;
+    cursor: pointer;
+
+    transition: 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-login:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+}
+
+/* Ripple animation */
+.btn-login::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    background: rgba(255,255,255,0.3);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+}
+
+.btn-login:active::after {
+    width: 200%;
+    height: 200%;
+    opacity: 1;
+    transition: 0.4s;
+}
+
+/* ===== ERROR ===== */
+.alert {
+    background: rgba(239,68,68,0.15);
+    border: 1px solid rgba(239,68,68,0.4);
+    color: #fecaca;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+/* ===== LINKS ===== */
+.links {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.links a {
+    color: #93c5fd;
+    text-decoration: none;
+    font-size: 13px;
+    display: block;
+    margin-top: 5px;
+}
+
+.links a:hover {
+    color: #ffffff;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 500px) {
+    .login-card {
+        padding: 25px;
+    }
+}
+
+</style>
+
+<div class="login-page">
+
+    <div class="login-card">
+
+        <div class="title">Workshop Portal</div>
+        <div class="subtitle">Login to continue</div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% if form.errors %}
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <div class="alert">{{ error }}</div>
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+
+            {{ form.username }}
+            {{ form.password }}
+
+            <button type="submit" class="btn-login">Sign In</button>
+        </form>
+
+        <div class="links">
+            <a href="{% url 'workshop_app:register' %}">Create account</a>
+            <a href="{% url 'password_reset' %}">Forgot password?</a>
         </div>
+
     </div>
+
+</div>
+
 {% endblock %}
