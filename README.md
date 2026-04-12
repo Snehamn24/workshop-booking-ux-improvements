@@ -63,7 +63,7 @@ This ensured a unified look and feel across the application.
 
 ### Before Improvements
 
-![Login Before](screenshots/login_before.png)
+![Login Before](login_before.png)
 ![Register Before](screenshots/register_before.png)
 ![Register Before 2](screenshots/register_before2.png)
 
