@@ -64,13 +64,13 @@ This ensured a unified look and feel across the application.
 ### Before Improvements
 
 ![Login Before](login_before.png)
-![Register Before](screenshots/register_before.png)
-![Register Before 2](screenshots/register_before2.png)
+![Register Before](register_before.png)
+![Register Before 2](register_before2.png)
 
 ---
 
 ### After Improvements
 
-![Login After](screenshots/login_after.png)
-![Register After 1](screenshots/register_After1.png)
-![Register After 2](screenshots/register_after2.png)
+![Login After](login_after.png)
+![Register After 1](register_After1.png)
+![Register After 2](register_after2.png)
