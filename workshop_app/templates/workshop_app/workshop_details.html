@@ -1,84 +1,263 @@
 {% extends 'workshop_app/base.html' %}
 
 {% block title %}
-    View Workshop details
+Workshop Details
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <table class="table table-bordered">
-            <tr>
-                <th><label for="id_first_name">Workshop Type :</label></th>
-                <td><label for="id_first_name"><a
-                        href="{% url 'workshop_app:workshop_type_details' workshop.workshop_type_id %}">{{ workshop.workshop_type }}</a></label>
-                </td>
-            </tr>
-            <tr>
-                <th><label for="id_last_name">Date :</label></th>
-                <td><label for="id_last_name">{{ workshop.date }}</label></td>
-            </tr>
-            <tr>
-                <th><label for="id_email">Coordinator :</label></th>
-                <td><label for="id_email">{{ workshop.coordinator.get_full_name|title }}</label>
-                </td>
-            </tr>
-            {% if workshop.status %}
-                <tr>
-                    <th><label for="id_institute">Status :</label></th>
-                    <td><span class="badge badge-success">{{ workshop.get_status }}</span></td>
-                </tr>
-                <tr>
-                    <th><label for="id_phone_number">Instructor :</label></th>
-                    <td><label for="id_email">{{ workshop.instructor.get_full_name|title }}</label>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <th><label for="id_institute">Status :</label></th>
-                    <td><span class="badge badge-warning">{{ workshop.get_status }}</span></td>
-                </tr>
-            {% endif %}
-        </table>
-        <br>
-        <div class="container">
-            <div class="card mt-2 mb-5">
-                <form method="post">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="mx-3 font-weight-bold">Post a comment</div>
-                            {% if request.user.profile.position == 'instructor' %}
-                                <div class="ml-5">{{ form.public }} Public</div>
-                                <div class="ml-1 text-muted">(Non-public comments are visible only to instructors)</div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        {{ form.comment }}
-                    </div>
-                    <button type="submit" class="float-right btn btn-primary btn-md m-2">Post</button>
-                </form>
-            </div>
-            <br><br>
-            <h2 class="text-center">Comments</h2>
-            <br>
-            {% for comment in workshop_comments %}
-                <div class="card my-2">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="ml-3 font-weight-bold"><a
-                                    href="{% url 'workshop_app:view_profile' comment.author_id %}">{{ comment.author }}</a></div>
-                            {% if not comment.public %}
-                                <div class="ml-1"><span class="badge badge-dark">Hidden</span></div>
-                            {% endif %}
-                            <div class="ml-3 text-muted">{{ comment.created_date }}</div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <p>{{ comment.comment }}</p>
-                    </div>
+
+<style>
+.page-wrapper {
+    padding: 40px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* glass card */
+.glass-card {
+    width: 100%;
+    max-width: 900px;
+
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(15px);
+
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.2);
+
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+
+    padding: 25px;
+    margin-bottom: 20px;
+
+    animation: fadeUp 0.6s ease;
+}
+
+@keyframes fadeUp {
+    from {opacity:0; transform:translateY(20px);}
+    to {opacity:1; transform:translateY(0);}
+}
+
+/* table */
+table {
+    width: 100%;
+    color: white;
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* links */
+a {
+    color: #93c5fd;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* badges */
+.badge-success {
+    background: #16a34a;
+    padding: 5px 10px;
+    border-radius: 8px;
+    color: white;
+}
+
+.badge-warning {
+    background: #f59e0b;
+    padding: 5px 10px;
+    border-radius: 8px;
+    color: black;
+}
+
+.badge-dark {
+    background: #374151;
+    padding: 5px 10px;
+    border-radius: 8px;
+    color: white;
+}
+
+/* comment box */
+.comment-box {
+    width: 100%;
+    padding: 12px;
+
+    border-radius: 10px;
+    border: none;
+
+    background: rgba(255,255,255,0.15);
+    color: white;
+}
+
+/* post button */
+.btn-post {
+    float: right;
+    margin-top: 10px;
+
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+
+    background: #2563eb;
+    color: white;
+
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-post:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+}
+
+/* comment cards */
+.comment-card {
+    width: 100%;
+    max-width: 900px;
+
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(10px);
+
+    border-radius: 12px;
+    padding: 15px;
+
+    margin-bottom: 12px;
+
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.comment-user {
+    font-weight: bold;
+}
+
+.comment-date {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+/* center title */
+.section-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+}
+</style>
+
+<div class="page-wrapper">
+
+<!-- WORKSHOP DETAILS -->
+<div class="glass-card">
+
+    <div class="section-title">Workshop Details</div>
+
+    <table>
+        <tr>
+            <th>Workshop Type</th>
+            <td>
+                <a href="{% url 'workshop_app:workshop_type_details' workshop.workshop_type_id %}">
+                    {{ workshop.workshop_type }}
+                </a>
+            </td>
+        </tr>
+
+        <tr>
+            <th>Date</th>
+            <td>{{ workshop.date }}</td>
+        </tr>
+
+        <tr>
+            <th>Coordinator</th>
+            <td>{{ workshop.coordinator.get_full_name|title }}</td>
+        </tr>
+
+        <tr>
+            <th>Status</th>
+            <td>
+                {% if workshop.status %}
+                    <span class="badge-success">{{ workshop.get_status }}</span>
+                {% else %}
+                    <span class="badge-warning">{{ workshop.get_status }}</span>
+                {% endif %}
+            </td>
+        </tr>
+
+        {% if workshop.status %}
+        <tr>
+            <th>Instructor</th>
+            <td>{{ workshop.instructor.get_full_name|title }}</td>
+        </tr>
+        {% endif %}
+    </table>
+
+</div>
+
+<!-- COMMENT FORM -->
+<div class="glass-card">
+
+    <div class="section-title">Post a Comment</div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% if request.user.profile.position == 'instructor' %}
+            <div style="margin-bottom:10px;">
+                {{ form.public }} <span style="margin-left:5px;">Public</span>
+                <div style="font-size:12px; color:#9ca3af;">
+                    Non-public comments are visible only to instructors
                 </div>
-            {% endfor %}
+            </div>
+        {% endif %}
+
+        {{ form.comment }}
+
+        <button type="submit" class="btn-post">Post</button>
+    </form>
+
+</div>
+
+<!-- COMMENTS -->
+<div class="section-title">Comments</div>
+
+{% for comment in workshop_comments %}
+
+<div class="comment-card">
+
+    <div class="comment-header">
+        <div class="comment-user">
+            <a href="{% url 'workshop_app:view_profile' comment.author_id %}">
+                {{ comment.author }}
+            </a>
+
+            {% if not comment.public %}
+                <span class="badge-dark">Hidden</span>
+            {% endif %}
+        </div>
+
+        <div class="comment-date">
+            {{ comment.created_date }}
         </div>
     </div>
+
+    <div>
+        {{ comment.comment }}
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>
 
 {% endblock %}
