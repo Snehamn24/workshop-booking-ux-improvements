@@ -1,32 +1,121 @@
 {% extends 'workshop_app/base.html' %}
 
 {% block title %}
-    View Workshop details
+Workshop Type Details
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <h2 class="text-center m-3">Workshop Details</h2>
-        <table class="table table-hover">
-            <tr class="d-flex">
-                <th class="col-3">Workshop Name :</th>
-                <td class="col">{{ workshop_type.name }}</td>
+
+<style>
+.page-wrapper {
+    padding: 50px 15px;
+    display: flex;
+    justify-content: center;
+}
+
+/* glass card */
+.glass-card {
+    width: 100%;
+    max-width: 800px;
+
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(15px);
+
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.2);
+
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+
+    padding: 30px;
+
+    animation: fadeUp 0.6s ease;
+}
+
+@keyframes fadeUp {
+    from {opacity:0; transform:translateY(20px);}
+    to {opacity:1; transform:translateY(0);}
+}
+
+/* title */
+.title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 25px;
+    color: #e6f1ff;
+}
+
+/* table */
+table {
+    width: 100%;
+    color: white;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    vertical-align: top;
+}
+
+/* left labels */
+th {
+    width: 35%;
+    text-align: left;
+    color: #93c5fd;
+    font-weight: 600;
+}
+
+/* values */
+td {
+    color: #e5e7eb;
+}
+
+/* responsive */
+@media (max-width: 600px) {
+    th, td {
+        display: block;
+        width: 100%;
+    }
+
+    th {
+        margin-top: 10px;
+    }
+}
+</style>
+
+<div class="page-wrapper">
+
+    <div class="glass-card">
+
+        <div class="title">Workshop Type Details</div>
+
+        <table>
+
+            <tr>
+                <th>Workshop Name</th>
+                <td>{{ workshop_type.name }}</td>
             </tr>
-            <tr class="d-flex">
-                <th class="col-3">Duration :</th>
-                <td class="col">{{ workshop_type.duration }} day(s)</td>
+
+            <tr>
+                <th>Duration</th>
+                <td>{{ workshop_type.duration }} day(s)</td>
             </tr>
-            <tr class="d-flex">
-                <th class="col-3">Description :</th>
-                <td class="col">{{ workshop_type.description }}</td>
+
+            <tr>
+                <th>Description</th>
+                <td>{{ workshop_type.description }}</td>
             </tr>
-            <tr class="d-flex">
-                <th class="col-3">Terms and Conditions :</th>
-                <td class="col">{{ workshop_type.terms_and_conditions }}</td>
+
+            <tr>
+                <th>Terms & Conditions</th>
+                <td>{{ workshop_type.terms_and_conditions }}</td>
             </tr>
+
         </table>
+
     </div>
 
+</div>
+
 {% endblock %}
-
-
