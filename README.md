@@ -62,9 +62,9 @@ This ensured a unified look and feel across the application.
 ## 🖼️ Visual Showcase
 
 ### Before Improvements
-![Before](loginbefore.png)
-![Before](registerbefore.png)
-![Before](registerbefore2.png)
-![Before](loginbefore.png)
+![Before](screenshots/loginbefore.png)
+![Before](screenshots/registerbefore.png)
+![Before](screenshots/registerbefore2.png)
+![Before](screenshots/loginbefore.png)
 ```markdown
 ![Before](screenshots/before.png)
